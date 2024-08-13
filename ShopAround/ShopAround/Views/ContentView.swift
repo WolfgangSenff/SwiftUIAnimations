@@ -9,13 +9,19 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Query(sort: \Cat.cost) private var cats: [Cat]
+    @Query(sort: \Cat.friendlyName) private var cats: [Cat]
     
     @State private var showDetail = false
     @State private var showCart = false
     @State private var hasItemsInCart = false
     
     var body: some View {
+        let dragGesture = DragGesture()
+        let pressDrag = LongPressGesture().sequenced(before: dragGesture)
+            .onEnded { _ in
+                showCart.toggle()
+            }
+        
         NavigationStack {
                 ScrollView {
                     LazyVStack {
@@ -27,6 +33,7 @@ struct ContentView: View {
                                     .onCartIconsChanged {
                                         setCartIcon()
                                     }
+                                    .highPriorityGesture(pressDrag)
                             }
                         }
                     }
